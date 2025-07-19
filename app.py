@@ -2,8 +2,7 @@ import streamlit as st
 from transformers import pipeline
 
 st.set_page_config(page_title="AI Assistant", page_icon="🤖")
-st.header("Hi, I am Judy, your Assistant 🤖")
-
+st.title("Hi, I am Rose, your Assistant 🤖")
 
 # Load the model
 @st.cache_resource
