@@ -3,21 +3,29 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
+from langchain.docstore.document import Document
 
 st.set_page_config(page_title="AI Agent Demo", page_icon="🤖")
 st.title("🤖 AI Agent – FAQ & Recommendations")
 
+# Build FAQ knowledge base dynamically
 @st.cache_resource
-def load_faq_chain():
+def build_faq_chain():
+    faqs = [
+        {"question": "What is your return policy?", "answer": "You can return products within 30 days."},
+        {"question": "Do you offer discounts?", "answer": "Yes, we provide seasonal discounts."},
+        {"question": "How can I contact support?", "answer": "Email us at support@company.com."}
+    ]
+    docs = [Document(page_content=f"Q: {f['question']} A: {f['answer']}") for f in faqs]
     embedding = OpenAIEmbeddings()
-    faq_db = FAISS.load_local("faq_index", embedding)
+    faq_index = FAISS.from_documents(docs, embedding)
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=ChatOpenAI(model="gpt-4o"),
-        retriever=faq_db.as_retriever()
+        retriever=faq_index.as_retriever()
     )
     return qa_chain
 
-qa_chain = load_faq_chain()
+qa_chain = build_faq_chain()
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
