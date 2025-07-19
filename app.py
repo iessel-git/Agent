@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
@@ -8,19 +9,23 @@ from langchain.docstore.document import Document
 st.set_page_config(page_title="AI Agent Demo", page_icon="🤖")
 st.title("🤖 AI Agent – FAQ & Recommendations")
 
-# Build FAQ knowledge base dynamically
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def build_faq_chain():
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY environment variable not set")
+
     faqs = [
         {"question": "What is your return policy?", "answer": "You can return products within 30 days."},
         {"question": "Do you offer discounts?", "answer": "Yes, we provide seasonal discounts."},
         {"question": "How can I contact support?", "answer": "Email us at support@company.com."}
     ]
     docs = [Document(page_content=f"Q: {f['question']} A: {f['answer']}") for f in faqs]
-    embedding = OpenAIEmbeddings()
+
+    embedding = OpenAIEmbeddings(openai_api_key=api_key)
     faq_index = FAISS.from_documents(docs, embedding)
     qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(model="gpt-4o"),
+        llm=ChatOpenAI(openai_api_key=api_key, model="gpt-4o"),
         retriever=faq_index.as_retriever()
     )
     return qa_chain
