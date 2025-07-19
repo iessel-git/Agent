@@ -28,7 +28,7 @@ Question: {question}
 Answer:
 """
 prompt = PromptTemplate(template=template, input_variables=["question"])
-llm = ChatOpenAI(openai_api_key=api_key, model="gpt-4o")
+llm = ChatOpenAI(openai_api_key=api_key, model="gpt-3.5-turbo")
 chain = LLMChain(llm=llm, prompt=prompt)
 
 if "messages" not in st.session_state:
