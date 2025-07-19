@@ -7,7 +7,7 @@ from langchain.chat_models import ChatOpenAI
 from rapidfuzz import process
 
 st.set_page_config(page_title="AI Agent Demo", page_icon="🤖")
-st.title("🤖 AI Agent – FAQ & Recommendations")
+st.title("Hi, I am Rose, your Assitant 🤖 ")
 
 # Get API key from environment variable or Streamlit secrets
 api_key = os.getenv("OPENAI_API_KEY")
