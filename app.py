@@ -15,9 +15,6 @@ FAQ_CONTEXT = """FAQ:
 Q: What is your return policy?
 A: You can return products within 30 days.
 
-Q: Do you offer discounts?
-A: Yes, we provide seasonal discounts.
-
 Q: How can I contact support?
 A: Email us at support@company.com.
 
