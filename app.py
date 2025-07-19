@@ -11,15 +11,18 @@ def load_model():
 
 generator = load_model()
 
-FAQ_CONTEXT = """
-You are a helpful assistant that answers FAQs:
+FAQ_CONTEXT = """FAQ:
+Q: What is your return policy?
+A: You can return products within 30 days.
 
-1. What is your return policy? -> You can return products within 30 days.
-2. Do you offer discounts? -> Yes, we provide seasonal discounts.
-3. How can I contact support? -> Email us at support@company.com.
+Q: Do you offer discounts?
+A: Yes, we provide seasonal discounts.
 
-If the question is unrelated to the FAQ, politely say: "I’m sorry, I only answer FAQs for now."
-"""
+Q: How can I contact support?
+A: Email us at support@company.com.
+
+Now, answer the following question briefly:
+Q: """
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -35,16 +38,25 @@ if user_input := st.chat_input("Ask me anything..."):
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
+            prompt = f"{FAQ_CONTEXT}{user_input}\nA:"
             raw_response = generator(
-                f"{FAQ_CONTEXT}\nQuestion: {user_input}\nAnswer:",
-                max_length=120,
-                do_sample=True,
+                prompt,
+                max_length=len(prompt.split()) + 50,  # limit output tokens roughly
+                do_sample=False,
                 temperature=0.3,
-                top_p=0.9
             )[0]["generated_text"]
 
-            # Extract answer after "Answer:"
-            response = raw_response.split("Answer:")[-1].strip()
+            # Extract the answer portion by removing the prompt from output
+            answer_part = raw_response[len(prompt):].strip()
+
+            # Cut off at first newline or punctuation for a concise answer
+            for sep in ['\n', '.', '?', '!']:
+                if sep in answer_part:
+                    answer_part = answer_part.split(sep)[0] + sep
+                    break
+
+            response = answer_part
+
             st.markdown(response)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
