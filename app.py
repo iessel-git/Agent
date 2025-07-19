@@ -1,8 +1,8 @@
 import streamlit as st
 from transformers import pipeline
 
-st.set_page_config(page_title="Hybrid FAQ Bot", page_icon="🤖")
-st.title("🤖 Hybrid FAQ Bot – Dictionary + distilgpt2")
+st.set_page_config(page_title="AI Assistant", page_icon="🤖")
+st.markdown("## Hi, I am Judy, your Assistant 🤖")
 
 # Load the model
 @st.cache_resource
